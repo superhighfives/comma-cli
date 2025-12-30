@@ -1,10 +1,15 @@
 {
   "name": "comma",
+  "version": "0.1.0",
   "module": "src/index.tsx",
   "type": "module",
-  "private": true,
+  "bin": {
+    "comma": "src/index.tsx"
+  },
   "scripts": {
-    "dev": "bun run --watch src/index.tsx"
+    "dev": "bun run --watch src/index.tsx",
+    "start": "bun run src/index.tsx",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -15,6 +20,7 @@
   "dependencies": {
     "@opentui/core": "^0.1.63",
     "@opentui/react": "^0.1.63",
+    "fuse.js": "^7.1.0",
     "react": "^19.2.3"
   }
 }
