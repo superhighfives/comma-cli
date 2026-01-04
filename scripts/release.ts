@@ -30,6 +30,8 @@ const tag =
   tagArgIndex !== -1 && args[tagArgIndex + 1]
     ? args[tagArgIndex + 1]
     : process.env.NPM_TAG || "latest";
+const otpArgIndex = args.findIndex((arg) => arg === "--otp");
+const otp = otpArgIndex !== -1 && args[otpArgIndex + 1] ? args[otpArgIndex + 1] : undefined;
 
 const log = (msg: string) => console.log(`${dim}[release]${reset} ${msg}`);
 
@@ -39,6 +41,7 @@ console.log(`${bold}${cyan}+----------------------------------------+${reset}\n`
 
 log(`Version: ${bold}${version}${reset}`);
 log(`Tag: ${bold}${tag}${reset}`);
+log(`OTP: ${otp ? `${green}provided${reset}` : `${dim}not provided${reset}`}`);
 log(`Dry run: ${dryRun ? `${yellow}yes${reset}` : "no"}`);
 log(`Build: ${skipBuild ? `${yellow}skip${reset}` : "run"}`);
 console.log();
@@ -152,6 +155,7 @@ const publishPackage = async (
     "--access public",
     `--tag ${tag}`,
     npmToken ? `--userconfig ${npmrcPath}` : "",
+    otp ? `--otp ${otp}` : "",
     dryRun ? "--dry-run" : "",
   ]
     .filter(Boolean)
