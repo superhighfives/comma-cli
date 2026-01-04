@@ -24,7 +24,7 @@ const mainPackage = JSON.parse(readFileSync(packageJsonPath, "utf8"));
 const version = mainPackage.version;
 
 console.log(`\n${bold}${cyan}+----------------------------------------+${reset}`);
-console.log(`${bold}${cyan}|${reset}  Building ${bold}comma${reset} v${version}               ${bold}${cyan}|${reset}`);
+console.log(`${bold}${cyan}|${reset}  Building ${bold}comma-cli${reset} v${version}           ${bold}${cyan}|${reset}`);
 console.log(`${bold}${cyan}+----------------------------------------+${reset}\n`);
 
 // Platform configurations
@@ -113,12 +113,12 @@ try {
 
   for (const targetConfig of targets) {
     const { target, os, arch: archName, ext, key } = targetConfig;
-    const outdir = join(outputRoot, `comma-${os}-${archName}`);
+    const outdir = join(outputRoot, `comma-cli-${os}-${archName}`);
 
     console.log(`${cyan}>${reset} Building ${dim}${target}${reset}...`);
     mkdirSync(outdir, { recursive: true });
 
-    const binaryPath = join(outdir, `comma${ext}`);
+    const binaryPath = join(outdir, `comma-cli${ext}`);
 
     // Use bun build --compile for creating standalone executables
     const buildResult = await $`bun build ./src/index.tsx --compile --minify --target=${target} --outfile=${binaryPath}`.nothrow();
@@ -135,16 +135,16 @@ try {
     }
 
     // Create package.json for the platform-specific package
-    const pkgName = `comma-${os}-${archName}`;
+    const pkgName = `comma-cli-${os}-${archName}`;
     const platformPkg = {
       name: pkgName,
       version,
       description: `${mainPackage.description || "Command-line command manager"} (${os}-${archName} binary)`,
       os: [os === "windows" ? "win32" : os],
       cpu: [archName],
-      files: [`comma${ext}`],
+      files: [`comma-cli${ext}`],
       bin: {
-        comma: `comma${ext}`,
+        "comma-cli": `comma-cli${ext}`,
       },
     };
 
@@ -154,7 +154,7 @@ try {
     if (key === defaultTarget) {
       const localBinDir = join(repoRoot, "node_modules", ".bin");
       mkdirSync(localBinDir, { recursive: true });
-      const localBinPath = join(localBinDir, `comma${ext}`);
+      const localBinPath = join(localBinDir, `comma-cli${ext}`);
       cpSync(binaryPath, localBinPath);
       if (!ext) chmodSync(localBinPath, 0o755);
       console.log(`${dim}  - Installed to${reset} ${localBinPath}`);

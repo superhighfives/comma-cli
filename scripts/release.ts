@@ -34,7 +34,7 @@ const tag =
 const log = (msg: string) => console.log(`${dim}[release]${reset} ${msg}`);
 
 console.log(`\n${bold}${cyan}+----------------------------------------+${reset}`);
-console.log(`${bold}${cyan}|${reset}  Releasing ${bold}comma${reset} v${version}             ${bold}${cyan}|${reset}`);
+console.log(`${bold}${cyan}|${reset}  Releasing ${bold}comma-cli${reset} v${version}         ${bold}${cyan}|${reset}`);
 console.log(`${bold}${cyan}+----------------------------------------+${reset}\n`);
 
 log(`Version: ${bold}${version}${reset}`);
@@ -85,7 +85,7 @@ if (!existsSync(distDir)) {
 }
 
 const platformPackages = readdirSync(distDir, { withFileTypes: true })
-  .filter((d) => d.isDirectory() && d.name.startsWith("comma-"))
+  .filter((d) => d.isDirectory() && d.name.startsWith("comma-cli-"))
   .map((d) => ({
     name: d.name,
     dir: join(distDir, d.name),
@@ -101,7 +101,7 @@ log(`Found ${platformPackages.length} platform package(s)`);
 // Make binaries executable
 for (const { name, dir } of platformPackages) {
   if (!name.includes("windows")) {
-    const binPath = join(dir, "comma");
+    const binPath = join(dir, "comma-cli");
     if (existsSync(binPath)) {
       chmodSync(binPath, 0o755);
     }
@@ -113,7 +113,7 @@ const hostPkg = platformPackages.find(({ name }) =>
   name.includes(hostKey.replace("win32", "windows").replace("-", "-"))
 );
 if (hostPkg) {
-  const binName = hostPkg.name.includes("windows") ? "comma.exe" : "comma";
+  const binName = hostPkg.name.includes("windows") ? "comma-cli.exe" : "comma-cli";
   const binPath = join(hostPkg.dir, binName);
   if (existsSync(binPath)) {
     try {

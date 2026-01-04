@@ -3,14 +3,14 @@ import { join } from "path";
 import { mkdir, copyFile, access, constants } from "fs/promises";
 
 /**
- * Get the config directory path (~/.config/comma/)
+ * Get the config directory path (~/.config/comma-cli/)
  */
 export function getConfigDir(): string {
-  return join(homedir(), ".config", "comma");
+  return join(homedir(), ".config", "comma-cli");
 }
 
 /**
- * Get the commands file path (~/.config/comma/commands.json)
+ * Get the commands file path (~/.config/comma-cli/commands.json)
  */
 export function getCommandsFilePath(): string {
   return join(getConfigDir(), "commands.json");

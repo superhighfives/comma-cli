@@ -1,12 +1,12 @@
 {
-  "name": "comma",
+  "name": "comma-cli",
   "version": "0.1.0",
-  "module": "src/index.tsx",
-  "type": "module",
+  "description": "A command-line command manager for saving, organizing, and executing frequently used shell commands.",
   "bin": {
-    "comma": "src/index.tsx"
+    "comma-cli": "run.js"
   },
   "scripts": {
+    "postinstall": "node install.js",
     "dev": "bun run --watch src/index.tsx",
     "start": "bun run src/index.tsx",
     "typecheck": "tsc --noEmit",
@@ -15,6 +15,28 @@
     "release": "bun run scripts/release.ts",
     "release:dry": "bun run scripts/release.ts --dry-run"
   },
+  "files": [
+    "install.js",
+    "run.js",
+    "README.md"
+  ],
+  "keywords": [
+    "cli",
+    "command-manager",
+    "shell",
+    "terminal",
+    "commands",
+    "shortcuts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superhighfives/comma-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/superhighfives/comma-cli/issues"
+  },
+  "homepage": "https://github.com/superhighfives/comma-cli#readme",
+  "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest"
   },
