@@ -8,6 +8,7 @@ export interface CommandListProps {
   searchFocused: boolean;
   showFavoritesOnly: boolean;
   statusMessage: string | null;
+  onSearchChange?: (value: string) => void;
 }
 
 export const CommandList = ({
@@ -17,6 +18,7 @@ export const CommandList = ({
   searchFocused,
   showFavoritesOnly,
   statusMessage,
+  onSearchChange,
 }: CommandListProps) => {
   // Calculate visible area (simple scrolling)
   const maxVisible = 15;
@@ -41,7 +43,7 @@ export const CommandList = ({
 
       {/* Search box */}
       <box
-        title={searchFocused ? "Search (Esc to cancel, Backspace to delete)" : "Search"}
+        title="Search"
         style={{
           border: true,
           borderColor: searchFocused ? "#00FFFF" : "#666666",
@@ -50,13 +52,12 @@ export const CommandList = ({
           marginBottom: 1,
         }}
       >
-        <text 
-          content={
-            searchFocused 
-              ? (searchQuery + "█") 
-              : (searchQuery || (showFavoritesOnly ? "/ to search favorites..." : "/ to search..."))
-          }
-          style={{ fg: searchFocused || searchQuery ? "#FFFFFF" : "#666666" }}
+        <input
+          value={searchQuery}
+          placeholder={showFavoritesOnly ? "/ to search favorites..." : "/ to search..."}
+          focused={searchFocused}
+          onInput={onSearchChange}
+          onChange={onSearchChange}
         />
       </box>
 

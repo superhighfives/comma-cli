@@ -267,23 +267,35 @@ export const App = ({ executeId, executeArgs, execMode, onExit }: AppProps) => {
       return;
     }
 
-    // List view handlers
+    // List view handlers when search is focused
     if (searchFocused) {
-      // Handle search input via keyboard
+      // Handle escape to exit search mode
       if (key.name === "escape") {
         setSearchFocused(false);
         setSearchQuery("");
         return;
       }
-      if (key.name === "return") {
+      // Allow Enter to select current item while searching
+      if (key.name === "return" && selectedCommand) {
         setSearchFocused(false);
+        void handleExecute(selectedCommand);
         return;
       }
+      // Allow arrow keys to navigate while typing
+      if (key.name === "up" || (key.ctrl && key.name === "p")) {
+        moveUp();
+        return;
+      }
+      if (key.name === "down" || (key.ctrl && key.name === "n")) {
+        moveDown();
+        return;
+      }
+      // Handle backspace
       if (key.name === "backspace") {
         setSearchQuery((prev) => prev.slice(0, -1));
         return;
       }
-      // Add printable characters to search
+      // Handle printable characters
       if (key.sequence && key.sequence.length === 1 && !key.ctrl && !key.meta) {
         setSearchQuery((prev) => prev + key.sequence);
         return;
@@ -380,6 +392,7 @@ export const App = ({ executeId, executeArgs, execMode, onExit }: AppProps) => {
           searchFocused={searchFocused}
           showFavoritesOnly={showFavoritesOnly}
           statusMessage={statusMessage}
+          onSearchChange={setSearchQuery}
         />
       )}
 
