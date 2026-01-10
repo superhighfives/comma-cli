@@ -30,8 +30,19 @@ const tag =
   tagArgIndex !== -1 && args[tagArgIndex + 1]
     ? args[tagArgIndex + 1]
     : process.env.NPM_TAG || "latest";
-const otpArgIndex = args.findIndex((arg) => arg === "--otp");
-const otp = otpArgIndex !== -1 && args[otpArgIndex + 1] ? args[otpArgIndex + 1] : undefined;
+// Handle --otp=<value> or --otp <value>
+let otp: string | undefined;
+const otpArgIndex = args.findIndex((arg) => arg.startsWith("--otp"));
+if (otpArgIndex !== -1) {
+  const otpArg = args[otpArgIndex];
+  if (otpArg.includes("=")) {
+    // Format: --otp=596429
+    otp = otpArg.split("=")[1];
+  } else if (args[otpArgIndex + 1]) {
+    // Format: --otp 596429
+    otp = args[otpArgIndex + 1];
+  }
+}
 
 const log = (msg: string) => console.log(`${dim}[release]${reset} ${msg}`);
 
