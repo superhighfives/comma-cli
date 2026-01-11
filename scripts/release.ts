@@ -149,6 +149,20 @@ if (platformPackages.length === 0) {
 
 log(`Found ${platformPackages.length} platform package(s)`);
 
+// Sync version in all platform packages to match main package
+log(`${cyan}>${reset} Syncing versions in platform packages...`);
+for (const { name, dir } of platformPackages) {
+  const pkgJsonPath = join(dir, "package.json");
+  if (existsSync(pkgJsonPath)) {
+    const platformPkg = JSON.parse(await Bun.file(pkgJsonPath).text());
+    if (platformPkg.version !== version) {
+      platformPkg.version = version;
+      await Bun.write(pkgJsonPath, JSON.stringify(platformPkg, null, 2));
+      log(`${dim}  - Updated ${name} to v${version}${reset}`);
+    }
+  }
+}
+
 // Make binaries executable
 for (const { name, dir } of platformPackages) {
   if (!name.includes("windows")) {
