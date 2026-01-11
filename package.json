@@ -1,6 +1,6 @@
 {
   "name": "comma-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A command-line command manager for saving, organizing, and executing frequently used shell commands.",
   "bin": {
     "comma-cli": "run.js"
@@ -12,6 +12,8 @@
     "typecheck": "tsc --noEmit",
     "build": "bun run scripts/build.ts",
     "build:all": "bun run scripts/build.ts --all",
+    "changeset": "changeset",
+    "version": "changeset version",
     "release": "bun run scripts/release.ts",
     "release:dry": "bun run scripts/release.ts --dry-run"
   },
@@ -38,6 +40,7 @@
   "homepage": "https://github.com/superhighfives/comma-cli#readme",
   "license": "MIT",
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@types/bun": "latest"
   },
   "peerDependencies": {

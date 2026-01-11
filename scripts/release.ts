@@ -17,14 +17,15 @@ const reset = "\x1b[0m";
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 process.chdir(repoRoot);
 
-const pkg = JSON.parse(await Bun.file("package.json").text());
-const version = pkg.version;
+let pkg = JSON.parse(await Bun.file("package.json").text());
+let version = pkg.version;
 const hostKey = `${platform()}-${arch()}`;
 
 // CLI args
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
 const skipBuild = args.includes("--skip-build");
+const skipVersion = args.includes("--skip-version");
 const tagArgIndex = args.findIndex((arg) => arg === "--tag");
 const tag =
   tagArgIndex !== -1 && args[tagArgIndex + 1]
@@ -55,6 +56,7 @@ log(`Tag: ${bold}${tag}${reset}`);
 log(`OTP: ${otp ? `${green}provided${reset}` : `${dim}not provided${reset}`}`);
 log(`Dry run: ${dryRun ? `${yellow}yes${reset}` : "no"}`);
 log(`Build: ${skipBuild ? `${yellow}skip${reset}` : "run"}`);
+log(`Version bump: ${skipVersion ? `${yellow}skip${reset}` : "run"}`);
 console.log();
 
 // Check for NPM token
@@ -84,6 +86,41 @@ const run = async (cmd: string, cwd = repoRoot): Promise<void> => {
     throw new Error(`Command failed with exit code ${exitCode}: ${cmd}`);
   }
 };
+
+// Check for changesets and apply version bumps
+if (!skipVersion) {
+  const changesetDir = join(repoRoot, ".changeset");
+  const changesetFiles = existsSync(changesetDir)
+    ? readdirSync(changesetDir).filter((f) => f.endsWith(".md") && f !== "README.md")
+    : [];
+  
+  if (changesetFiles.length > 0) {
+    log(`${cyan}>${reset} Found ${changesetFiles.length} changeset(s), applying version bumps...`);
+    try {
+      await run("bunx changeset version");
+      // Reload package.json to get updated version
+      pkg = JSON.parse(await Bun.file("package.json").text());
+      const newVersion = pkg.version;
+      if (newVersion !== version) {
+        log(`${green}ok${reset} Version bumped from ${version} to ${newVersion}`);
+        version = newVersion;
+        // Update the header with new version
+        console.log(`\n${bold}${cyan}+----------------------------------------+${reset}`);
+        console.log(`${bold}${cyan}|${reset}  Releasing ${bold}comma-cli${reset} v${version}         ${bold}${cyan}|${reset}`);
+        console.log(`${bold}${cyan}+----------------------------------------+${reset}\n`);
+      } else {
+        log(`${yellow}~${reset} No version bump needed`);
+      }
+    } catch (error) {
+      console.error(`${red}x${reset} Failed to apply changesets: ${error}`);
+      process.exit(1);
+    }
+  } else {
+    log(`${dim}~${reset} No changesets found, skipping version bump`);
+  }
+} else {
+  log(`${dim}~${reset} Skipping version bump (--skip-version)`);
+}
 
 // Build all targets if not skipped
 if (!skipBuild) {

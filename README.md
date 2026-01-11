@@ -269,21 +269,47 @@ Build output is written to `./dist/comma-cli-{os}-{arch}/`.
 
 ## Releasing
 
-The release script builds all platforms and publishes to npm.
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and changelog generation.
+
+### Creating a Changeset
+
+When you make changes that should be released, create a changeset:
+
+```bash
+bun run changeset
+```
+
+This will prompt you to select the version bump type (patch/minor/major) and write a summary. Commit the changeset file with your changes.
+
+### Releasing
+
+The release script automatically applies changesets, builds all platforms, and publishes to npm.
 
 ```bash
 # Dry run (test without publishing)
 bun run release:dry
 
-# Release to npm
+# Release to npm (applies changesets, bumps version, builds, and publishes)
 NPM_TOKEN=your-token bun run release
+
+# Release with OTP for npm 2FA
+NPM_TOKEN=your-token bun run release --otp=123456
 
 # Release with a specific tag
 NPM_TOKEN=your-token bun run release -- --tag beta
 
 # Skip build (if already built)
 NPM_TOKEN=your-token bun run release -- --skip-build
+
+# Skip version bump (if already done manually)
+NPM_TOKEN=your-token bun run release -- --skip-version
 ```
+
+**Release workflow:**
+1. Make your changes
+2. Run `bun run changeset` to create a changeset
+3. Commit your changes and the changeset
+4. When ready to release, run `bun run release`
 
 **Environment variables:**
 

@@ -90,10 +90,26 @@ export interface ShellInfo {
   name: string;
 }
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 /**
  * Current application version
+ * Dynamically read from package.json to keep in sync with releases
  */
-export const VERSION = "0.1.0";
+export const VERSION = (() => {
+  try {
+    // Read package.json synchronously at module load time
+    const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+    const pkgPath = join(repoRoot, "package.json");
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+    return pkg.version || "0.0.0";
+  } catch {
+    // Fallback if package.json can't be read
+    return "0.0.0";
+  }
+})();
 
 /**
  * Current store schema version
