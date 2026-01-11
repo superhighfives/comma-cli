@@ -1,6 +1,6 @@
 {
   "name": "comma-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A command-line command manager for saving, organizing, and executing frequently used shell commands.",
   "bin": {
     "comma-cli": "run.js"
